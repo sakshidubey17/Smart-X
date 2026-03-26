@@ -7,6 +7,7 @@ import notificationsRoutes from "./routes/notification.route.js";
 import connectMongoDB from "./db/connectMongoDB.js";
 import cookiesParser from "cookie-parser";
 import {v2 as cloudinary} from "cloudinary";
+import suggestRoutes from "./routes/suggest.route.js";  
 
 
 dotenv.config();
@@ -29,6 +30,7 @@ app.use("/api/auth",authRoutes);
 app.use("/api/users",userRoutes);
 app.use("/api/posts",postRoutes);
 app.use("/api/notifications", notificationsRoutes);
+app.use("/api/suggest", suggestRoutes);  
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

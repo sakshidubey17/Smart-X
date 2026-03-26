@@ -9,6 +9,27 @@ const CreatePost = () => {
 	const [text, setText] = useState("");
 	const [img, setImg] = useState(null);
 	const imgRef = useRef(null);
+	
+	const [suggestions, setSuggestions] = useState([]);
+const [isSuggesting, setIsSuggesting] = useState(false);
+
+const handleSuggest = async () => {
+    if (!text.trim()) return toast.error("Pehle kuch likho!");
+    setIsSuggesting(true);
+    try {
+        const res = await fetch("/api/suggest", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ draft: text }),
+        });
+        const data = await res.json();
+        setSuggestions(data.suggestions || []);
+    } catch (err) {
+        toast.error("Suggestions can't be generated!");
+    } finally {
+        setIsSuggesting(false);
+    }
+};
 
 	const {data:authUser} = useQuery({queryKey: ['authUser']});
 	const queryClient = useQueryClient();
@@ -93,6 +114,14 @@ const CreatePost = () => {
 							onClick={() => imgRef.current.click()}
 						/>
 						<BsEmojiSmileFill className='fill-primary w-5 h-5 cursor-pointer' />
+						 <button
+                                type="button"
+                                className='btn btn-sm btn-outline rounded-full text-primary px-3'
+                                onClick={handleSuggest}
+                                disabled={isSuggesting}
+                            >
+                                {isSuggesting ? "..." : "✨ Suggest"}
+                            </button>
 					</div>
 					<input type='file'
                       accept='image/*'
@@ -104,6 +133,20 @@ const CreatePost = () => {
 				{isError && <div className='text-red-500'>
 					{error.message}
 					</div>}
+					{suggestions.length > 0 && (
+                             <div className='flex flex-col gap-2 mt-2'>
+                                 <p className='text-sm text-gray-500'>✨ Suggestions — click to use:</p>
+                                 {suggestions.map((s, i) => (
+                                     <div
+                                         key={i}
+                                         className='text-sm border border-gray-700 rounded-xl p-2 cursor-pointer hover:bg-gray-800'
+                                         onClick={() => { setText(s); setSuggestions([]); }}
+                                     >
+                                         {s}
+                                                              </div>
+                                 ))}
+                             </div>
+                         )}
 			</form>
 		</div>
 	);
