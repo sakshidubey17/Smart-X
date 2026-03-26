@@ -1,3 +1,4 @@
+import path from "path";
 import express from "express";
 import dotenv from "dotenv";
 import authRoutes from "./routes/auth.route.js";
@@ -20,6 +21,7 @@ cloudinary.config({
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const __dirname = path.resolve();
 
 app.use(express.json({limit:"5mb"})); // to parse req.body DoS
 app.use(express.urlencoded({ extended: true })); // to parse URL-encoded data
@@ -31,6 +33,14 @@ app.use("/api/users",userRoutes);
 app.use("/api/posts",postRoutes);
 app.use("/api/notifications", notificationsRoutes);
 app.use("/api/suggest", suggestRoutes);  
+
+if (process.env.NODE_ENV === "production"){
+    app.use(express.static(path.join(__dirname, "/frontend/dist")));
+
+  app.use((req, res) => {
+  res.status(404).json({ error: "Route not found" });
+});
+}
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

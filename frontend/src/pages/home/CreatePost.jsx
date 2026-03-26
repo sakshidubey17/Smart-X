@@ -14,7 +14,7 @@ const CreatePost = () => {
 const [isSuggesting, setIsSuggesting] = useState(false);
 
 const handleSuggest = async () => {
-    if (!text.trim()) return toast.error("Pehle kuch likho!");
+    if (!text.trim()) return toast.error("First write something!");
     setIsSuggesting(true);
     try {
         const res = await fetch("/api/suggest", {
