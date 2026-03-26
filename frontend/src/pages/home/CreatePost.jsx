@@ -24,7 +24,7 @@ const handleSuggest = async () => {
         });
         const data = await res.json();
         setSuggestions(data.suggestions || []);
-    } catch (err) {
+    } catch {
         toast.error("Suggestions can't be generated!");
     } finally {
         setIsSuggesting(false);
